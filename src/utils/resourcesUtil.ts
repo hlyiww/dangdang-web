@@ -1,4 +1,4 @@
-export default class ResourcesUtil {
+export class ResourcesUtil {
   static pendingList: Array<Promise<any>> = [];
   static resourcesMap: Record<string, string> = {};
 
@@ -13,7 +13,7 @@ export default class ResourcesUtil {
   static loadAllResources() {
     const loadingStack = [];
     loadingStack.push(import.meta.glob("../assets/images/**/*.png"));
-    loadingStack.forEach(this.loading);
+    loadingStack.forEach(this.loading.bind(this));
   }
 
   static loading(originDataByGlob: Record<string, FuncType>) {
@@ -22,7 +22,17 @@ export default class ResourcesUtil {
     });
     Promise.all(this.pendingList).then((list) => {
       list.forEach(this.buildResourcesMap.bind(this));
-      console.log(this.resourcesMap);
+      // console.log(this.resourcesMap);
     });
   }
+
+  static getSrc(resourcesName: string) {
+    // 简单优化一下，默认 resources 指代 images 并且拼接 .png
+    resourcesName = resourcesName.includes(".png")
+      ? resourcesName
+      : resourcesName.concat(".png");
+    return this.resourcesMap[resourcesName] ?? "";
+  }
 }
+
+export default ResourcesUtil.getSrc.bind(ResourcesUtil);
