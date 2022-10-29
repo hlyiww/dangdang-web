@@ -6,6 +6,10 @@ import { readFileSync } from "fs";
 let server: ServerOptions;
 
 const getServerConfig = (mode: string): ServerOptions => {
+  const MODE_CONFIG_MAP: { [key: string]: Array<string> } = {
+    development: ["host", "port", "proxy"],
+    production: ["host", "port"],
+  };
   const basicEnvFileName = ".env";
   const currentModeEnvFileName = `${basicEnvFileName}.${mode}`;
   const {
@@ -17,11 +21,13 @@ const getServerConfig = (mode: string): ServerOptions => {
   return {
     host,
     port,
-    proxy: {
-      [backendPrefix]: {
-        target,
-      },
-    },
+    proxy: MODE_CONFIG_MAP[mode].includes("proxy")
+      ? {
+          [backendPrefix]: {
+            target,
+          },
+        }
+      : (null as any),
   };
 };
 
