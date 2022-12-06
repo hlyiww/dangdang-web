@@ -2,6 +2,7 @@ import { defineConfig, ServerOptions } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dotenv from 'dotenv'
 import { readFileSync } from 'fs'
+import Unocss from 'unocss/vite';
 
 let server: ServerOptions
 
@@ -35,7 +36,7 @@ const getServerConfig = (mode: string): ServerOptions => {
 export default defineConfig(({ mode }) => {
   server = getServerConfig(mode)
   return {
-    plugins: [vue()],
+    plugins: [vue(), Unocss({})],
     server,
   }
 })
